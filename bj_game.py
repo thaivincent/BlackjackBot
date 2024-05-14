@@ -58,7 +58,7 @@ for rank in RANKS:
 game_deck = [card for card in new_deck]
 random.shuffle(game_deck)
 
-# Deal 2 card to player
+# Deal 2 cards to player
 playerhand = Hand([game_deck.pop(0), game_deck.pop(0)],0,0)
 get_total(playerhand)
 
