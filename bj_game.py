@@ -1,7 +1,7 @@
 import random
 
 SUITS = ["diamond","club","heart","spade"]
-RANKS = ["2","3","4","5","6","7","8","9","10","J","Q","K","A" ]
+RANKS = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"]
 
 # A class with 2 fields of type String. One stores suit and the other stores rank.
 class Card:
@@ -21,12 +21,13 @@ class Hand:
 
  # get_value is a function which returns the value of a given card. This is the numeric value for 2-9 and 10 for J,Q,K, and 1 or 11 for A           
 def get_value(card):
-    if card.rank in RANKS[:9]:
+    if card.rank == "A":
+        return card.rank
+    elif card.rank in RANKS[1:9]:
         return int(card.rank)
-    elif card.rank in RANKS[9:12]:
+    elif card.rank in RANKS[9:]:
         return int(10)
-    else:
-        return "A"
+   
 
 # a function that updates the tot and alt tot values of a Hand class following the rules of blackjack
 def get_total(hand):
@@ -60,6 +61,8 @@ random.shuffle(game_deck)
 
 # Deal 2 cards to player
 playerhand = Hand([game_deck.pop(0), game_deck.pop(0)],0,0)
+#playerhand = Hand([Card("Heart","9"),Card("Spade","9")],0,0)
+print_hand(playerhand)
 get_total(playerhand)
 
 print_hand(playerhand)
