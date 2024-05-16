@@ -38,15 +38,18 @@ def get_total(hand):
         else:
             hand.tot += get_value(card)
             hand.alt_tot = hand.tot
+    return
 
 def hit(hand):
     hand.append(game_deck.pop(0))
+    return
 
 # For debuging hands
 def print_hand(hand):
     for card in hand.cards:
         print(card.rank,"of",card.suit)
     print("Tot:",hand.tot,"\n Alt Tot: ",hand.alt_tot)
+    return
 
 # Orderd new deck initalized
 new_deck = []
