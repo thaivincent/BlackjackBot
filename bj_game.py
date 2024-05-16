@@ -62,10 +62,11 @@ random.shuffle(game_deck)
 # Deal 2 cards to player
 playerhand = Hand([game_deck.pop(0), game_deck.pop(0)],0,0)
 #playerhand = Hand([Card("Heart","9"),Card("Spade","9")],0,0)
+
+"""
 print_hand(playerhand)
 get_total(playerhand)
 
 print_hand(playerhand)
 
-
-    
+"""   
