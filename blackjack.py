@@ -3,7 +3,7 @@ import bj_game as bj
 import sys
 import os
 import random
-import numpy as np
+import numpy
 
 pg.init()
 
@@ -84,7 +84,7 @@ def load_card(card, x, y):
     height = 105
 
     # Rank = 0 means loading a card back
-    if card.rank == 0:
+    if card == 0:
         screen.blit(deck_sprite,(x,y),(119,374,width,height))
         return
 
@@ -103,7 +103,24 @@ def load_card(card, x, y):
     screen.blit(deck_sprite,(x,y),(sprite_x,sprite_y,width,height))
     return
 
+def wait(event):
+    while True:
+        for i in event:
+            if i.check_clicked():
+                return
 
+def start_game():
+    # Intialize a game deck and shuffle it
+    game_deck = list(numpy.repeat(bj.new_deck,DECK_COUNT))
+    random.shuffle(game_deck)
+
+    # Deal 2 cards to player and dealer
+    playerhand = bj.Hand([game_deck.pop(0), game_deck.pop(0)],0,0) 
+    dealerhand = bj.Hand([game_deck.pop(0), game_deck.pop(0)],0,0)
+    return playerhand, dealerhand       
+
+dealer_starting_x = 300
+playerhand,dealerhand = start_game()
 screen.blit(background,(0,0))
 pg.display.flip()
 
@@ -113,40 +130,39 @@ stand_button  = animation(450,450,"bj_game_assets\\stand_button")
 buttons.add(hit_button)
 buttons.add(stand_button)
 
-
+#initializing all statuses
 run = True
+dealer_loaded = False
+
 while run:
     # Quit
     for event in pg.event.get():
         if event.type == pg.QUIT:
             run = False
-        
+    
 
     buttons.draw(screen)
     buttons.update()
+
+    #Load all of the cards to the screen
+    while not dealer_loaded :
+        for i in playerhand.cards:
+            load_card(i,dealer_starting_x, 75)
+            dealer_starting_x += 50
+        dealer_loaded = True
+
+  
+
+
+
+  
+
+    #wait(buttons)
+
     if hit_button.check_clicked():
         print("hit")
     if stand_button.check_clicked():
         print("stand")
-    
-    # Intialize a game deck and shuffle it
-    game_deck = np.repeat(bj.new_deck,DECK_COUNT)
-    random.shuffle(game_deck)
-
-    # Deal 2 cards to player and dealer
-    playerhand = bj.Hand([game_deck.pop(0), game_deck.pop(0)],0,0) 
-    dealerhand = bj.Hand([game_deck.pop(0), game_deck.pop(0)],0,0) 
-
-    #Load all of the cards to the screen
-    for i in playerhand.cards:
-        starting_x = 100
-        starting_y = 100
-        load_card(i,starting_x,starting_y)
-
-        starting_y += 50
-        starting_x += 50
-
-
     pg.display.flip()
 
 

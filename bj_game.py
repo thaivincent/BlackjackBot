@@ -51,6 +51,9 @@ def print_hand(hand):
     print("Tot:",hand.tot,"\n Alt Tot: ",hand.alt_tot)
     return
 
+def print_card(card):
+    print(card.rank,"of",card.suit)
+    
 # Orderd new deck initalized
 new_deck = []
 for rank in RANKS:
