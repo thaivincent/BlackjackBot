@@ -58,12 +58,9 @@ for rank in RANKS:
         card = Card(suit,rank)
         new_deck.append(card)
 
-# Intialize a game deck and shuffle it
-game_deck = [card for card in new_deck]
-random.shuffle(game_deck)
 
-# Deal 2 cards to player
-playerhand = Hand([game_deck.pop(0), game_deck.pop(0)],0,0)
+
+
 #playerhand = Hand([Card("Heart","9"),Card("Spade","9")],0,0)
 
 """

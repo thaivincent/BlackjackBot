@@ -2,11 +2,16 @@ import pygame as pg
 import bj_game as bj
 import sys
 import os
+import random
+import numpy as np
 
 pg.init()
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
+
+# How many decks in a standard game of blackjack
+DECK_COUNT = 6
 
 screen = pg.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT), pg.RESIZABLE)
 screen.convert()
@@ -15,16 +20,8 @@ screen.convert()
 
 background = pg.image.load('bj_game_assets\\background.png')
 deck_sprite = pg.image.load('bj_game_assets\\full_deck_spritesheet.png').convert_alpha()
-hit_button = pg.image.load("bj_game_assets\hit_button\Hit Button1.jpg")
+hover_img = pg.image.load("bj_game_assets\\Medium Hover.png").convert_alpha()
 
-class Button():
-    def __init__(self,x,y,image): 
-        self.image = image
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x,y)
-
-    def draw(self):
-        screen.blit(self.image, (self.rect.x,self.rect.y))
 
 class animation(pg.sprite.Sprite):
     def __init__(self, x, y,dir):
@@ -33,7 +30,9 @@ class animation(pg.sprite.Sprite):
         for file in os.listdir(dir):
             f = os.path.join(dir,file)
             self.sprites.append(pg.image.load(f))
-        self.is_animating = False
+
+        self.clicked = False
+        self.is_animating = False   
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
         self.rect = self.image.get_rect()
@@ -50,7 +49,27 @@ class animation(pg.sprite.Sprite):
                 self.current_sprite = 0
                 self.is_animating = False
 
-            self.image = self.sprites[int(self.current_sprite)]
+            self.image = self.sprites[int(self.current_sprite)]     
+
+
+    def check_clicked(self):  
+        pos = pg.mouse.get_pos()
+        action = False
+
+        if self.rect.collidepoint(pos) and not self.clicked:
+            hover = hover_img.get_rect()
+            hover.topleft = (self.rect.left, self.rect.top)
+            screen.blit(hover_img,hover)
+
+            if pg.mouse.get_pressed()[0] == 1:
+                self.clicked = True
+                self.is_animating = True
+                action = True
+
+        if pg.mouse.get_pressed()[0] == 0:
+                    self.clicked = False           
+        return action
+
 
 
 
@@ -58,21 +77,21 @@ class animation(pg.sprite.Sprite):
 # Deck sritesheet , card sprites are 70px wide and 100px tall. First column of sprites is back of card variants
 # First card at (120,150) | Hearts, Diamonds, Clubs, Spades
 
-def load_card(rank,suit, x, y):
+def load_card(card, x, y):
     # Dimensions of a card
     spacing = 11.5
     width = 75
     height = 105
 
     # Rank = 0 means loading a card back
-    if rank == 0:
+    if card.rank == 0:
         screen.blit(deck_sprite,(x,y),(119,374,width,height))
         return
 
-    x_pos = bj.RANKS.index(rank) # This Calculates the position of the card on the spritesheet.
+    x_pos = bj.RANKS.index(card.rank) # This Calculates the position of the card on the spritesheet.
 
     #Converts Positioning of the SUITS index to the coresponding row of the sprite index.
-    y_pos = bj.SUITS.index(suit) 
+    y_pos = bj.SUITS.index(card.suit) 
     if y_pos != 3:
         y_pos += 1
         y_pos %= 3
@@ -88,9 +107,11 @@ def load_card(rank,suit, x, y):
 screen.blit(background,(0,0))
 pg.display.flip()
 
-button_sprites = pg.sprite.Group()
-button = animation(100,100,"bj_game_assets\\hit_button")
-button_sprites.add(button)
+buttons = pg.sprite.Group()
+hit_button = animation(250,450,"bj_game_assets\\hit_button")
+stand_button  = animation(450,450,"bj_game_assets\\stand_button")
+buttons.add(hit_button)
+buttons.add(stand_button)
 
 
 run = True
@@ -99,12 +120,31 @@ while run:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             run = False
+        
 
-        if event.type == pg.MOUSEBUTTONDOWN:
-            button.animate()
+    buttons.draw(screen)
+    buttons.update()
+    if hit_button.check_clicked():
+        print("hit")
+    if stand_button.check_clicked():
+        print("stand")
+    
+    # Intialize a game deck and shuffle it
+    game_deck = np.repeat(bj.new_deck,DECK_COUNT)
+    random.shuffle(game_deck)
 
-    button_sprites.draw(screen)
-    button.update()
+    # Deal 2 cards to player and dealer
+    playerhand = bj.Hand([game_deck.pop(0), game_deck.pop(0)],0,0) 
+    dealerhand = bj.Hand([game_deck.pop(0), game_deck.pop(0)],0,0) 
+
+    #Load all of the cards to the screen
+    for i in playerhand.cards:
+        starting_x = 100
+        starting_y = 100
+        load_card(i,starting_x,starting_y)
+
+        starting_y += 50
+        starting_x += 50
 
 
     pg.display.flip()
