@@ -120,6 +120,7 @@ def start_game():
     return playerhand, dealerhand       
 
 dealer_starting_x = 300
+
 playerhand,dealerhand = start_game()
 screen.blit(background,(0,0))
 pg.display.flip()
@@ -133,6 +134,7 @@ buttons.add(stand_button)
 #initializing all statuses
 run = True
 dealer_loaded = False
+player_loaded = False
 
 while run:
     # Quit
@@ -146,11 +148,19 @@ while run:
 
     #Load all of the cards to the screen
     while not dealer_loaded :
-        for i in playerhand.cards:
+        for i in dealerhand.cards:
             load_card(i,dealer_starting_x, 75)
             dealer_starting_x += 50
         dealer_loaded = True
+        dealer_starting_x = 300
 
+    while not player_loaded:
+        for i in playerhand.cards:
+            load_card(i,dealer_starting_x, 275)
+            dealer_starting_x += 50
+        
+        player_loaded = True
+        dealer_starting_x = 300   
   
 
 
