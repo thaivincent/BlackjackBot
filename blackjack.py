@@ -25,7 +25,6 @@ hover_img = pg.image.load("bj_game_assets\\Medium Hover.png").convert_alpha()
 
 GAME_FONT = pg.freetype.Font("bj_game_assets\\Minecraft.ttf", 48)
 
-
 class animation(pg.sprite.Sprite):
     def __init__(self, x, y,dir):
         super().__init__()
@@ -72,10 +71,6 @@ class animation(pg.sprite.Sprite):
         if pg.mouse.get_pressed()[0] == 0:
                     self.clicked = False           
         return action
-
-
-
-
         
 # Deck spritesheet , card sprites are 70px wide and 100px tall. First column of sprites is back of card variants
 # First card at (120,150) | Hearts, Diamonds, Clubs, Spades
@@ -111,6 +106,8 @@ def load_card(card, x, y):
 def start_game():
     # Intialize a game deck and shuffle it
     global game_deck
+    global dealerhand
+    global playerhand
     game_deck = list(numpy.repeat(bj.new_deck,DECK_COUNT))
     random.shuffle(game_deck)
 
@@ -128,10 +125,8 @@ def player_stand():
     stand_flag = True
     return
 
-def get_stand_flag():
-    return stand_flag
-
 def player_bust():
+    global bust_flag
     bust_flag = True
     return
 
@@ -184,6 +179,7 @@ buttons.add(hit_button)
 buttons.add(stand_button)
 
 
+# Redraws the entire game: background, cards, and dealerhand value
 def redraw_game():
     screen.blit(background,(0,0))
     dealer_starting_x = 609
@@ -195,43 +191,75 @@ def redraw_game():
         load_card(i,player_starting_x, 445)
         player_starting_x += 60
     updateDealerTot()
+    buttons.draw(screen)
+    buttons.update()
     pg.display.flip()
 
+
+# For clearing player and dealer hands, resets their totals as well
+def clear_hand(hand):
+    for card in hand.cards:
+        card == None
+    hand.tot = 0
+    hand.alt_tot = 0
+    return
+
+# Resets game variables and hands
 def reset_game():
+    global dealer_starting_x
+    dealer_starting_x = 609
+    global dealer_loaded
     dealer_loaded = False
+    global player_loaded
     player_loaded = False
     global stand_flag
     stand_flag = False
+    global bust_flag
     bust_flag = False
-    bj.clear_hand(dealerhand)
-    bj.clear_hand(playerhand)
+    global playerhand
+    global dealerhand
+    playerhand, dealerhand = start_game()
+    buttons.draw(screen)
+    buttons.update()
     return
 
 # Initializing all statuses
 run = True
-dealer_loaded = False
-player_loaded = False
-stand_flag = False
 
-while run:
-
-    # Quit
+# Function to exit game when the X button is pressed
+def exit_game():
     for event in pg.event.get():
         if event.type == pg.QUIT:
             run = False
-    
 
-    buttons.draw(screen)
-    buttons.update()
+# Checks winner of blackjack game, used each time the dealer hits
+def check_winner():
+    if (dealerhand.tot >= 17 and dealerhand.tot <= 21) or (dealerhand.alt_tot >= 17 and dealerhand.alt_tot <= 21):
+            if playerhand.tot < dealerhand.tot and playerhand.tot < dealerhand.alt_tot:
+                print("Dealer wins.")
+            elif playerhand.tot == dealerhand.tot and playerhand.tot == dealerhand.tot:
+                print("Push.")
+            else:
+                print("Dealer bust.")
+    return
+
+
+while run:
+
+    # Initialize game
+    exit_game()
+    reset_game()
+    redraw_game()
 
     #Load all of the cards to the screen
     while not dealer_loaded :
+        exit_game()
         for i in dealerhand.cards:
             load_card(i,dealer_starting_x, 175)
-            dealer_starting_x += 50
+            dealer_starting_x += 60
         
         # Loads back of card ON TOP of actual card, hence the -50 in x coordinate
-        load_card(0, dealer_starting_x-50, 175)
+        load_card(0, dealer_starting_x-60, 175)
         
         if bj.get_value(dealerhand.cards[0]) == "A":
             string = str(1) + "/" + str(11)
@@ -244,22 +272,27 @@ while run:
         dealer_starting_x = 609
 
     while not player_loaded:
+        exit_game()
         for i in playerhand.cards:
             load_card(i,dealer_starting_x, 445)
-            dealer_starting_x += 50
+            dealer_starting_x += 60
         
+        player_starting_x = dealer_starting_x
+
         player_loaded = True
         dealer_starting_x = 609   
 
     pg.display.flip()
 
     while not stand_flag: 
+        exit_game()
         if (bust_flag) or (playerhand.tot >= 21 and playerhand.alt_tot >= 21):
             print("Here1")
             pg.display.flip()
             break
         else:
             player_turn()
+            redraw_game()
             pg.display.flip()
             if stand_flag == True:
                 break
@@ -267,20 +300,17 @@ while run:
     pg.display.flip()
 
     while stand_flag:
-        bj.hit(dealerhand, game_deck)
-        bj.get_total(dealerhand)
+        exit_game()
         redraw_game()
+        bj.hit(dealerhand.cards, game_deck)
+        dealerhand.tot, dealerhand.tot_alt = bj.get_total(dealerhand)
         if (dealerhand.tot >= 17 and dealerhand.tot <= 21) or (dealerhand.alt_tot >= 17 and dealerhand.alt_tot <= 21):
-            if playerhand.tot < dealerhand.tot and playerhand.tot < dealerhand.alt_tot:
-                print("Dealer wins.")
-            elif playerhand.tot == dealerhand.tot and playerhand.tot == dealerhand.tot:
-                print("Push.")
-            else:
-                print("Dealer bust.")
+            check_winner()
+            reset_game()
+            print(stand_flag)
             break
 
-    while bust_flag:
-        print("Here4")
-        reset_game()
-    run = False
+    print(bust_flag)
+
+
 pg.quit()
