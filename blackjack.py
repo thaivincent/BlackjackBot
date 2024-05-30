@@ -76,7 +76,7 @@ class animation(pg.sprite.Sprite):
 
 
         
-# Deck sritesheet , card sprites are 70px wide and 100px tall. First column of sprites is back of card variants
+# Deck spritesheet , card sprites are 70px wide and 100px tall. First column of sprites is back of card variants
 # First card at (120,150) | Hearts, Diamonds, Clubs, Spades
 
 def load_card(card, x, y):
@@ -123,8 +123,10 @@ def player_turn():
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()
+                sys.exit()
             if hit_button.check_clicked():
                 bj.hit(playerhand.cards,game_deck)
+                bj.get_total(playerhand)
                 bj.print_hand(playerhand)
                 return
             if stand_button.check_clicked():
