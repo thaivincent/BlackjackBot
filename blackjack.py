@@ -190,7 +190,11 @@ def redraw_game():
     for i in playerhand.cards:
         load_card(i,player_starting_x, 445)
         player_starting_x += 60
+    if not stand_flag:
+        load_card(0, dealer_starting_x-60, 175)
+    
     updateDealerTot()
+
     buttons.draw(screen)
     buttons.update()
     pg.display.flip()
@@ -216,8 +220,6 @@ def reset_game():
     stand_flag = False
     global bust_flag
     bust_flag = False
-    global playerhand
-    global dealerhand
     playerhand, dealerhand = start_game()
     buttons.draw(screen)
     buttons.update()
@@ -303,14 +305,17 @@ while run:
         exit_game()
         redraw_game()
         bj.hit(dealerhand.cards, game_deck)
-        dealerhand.tot, dealerhand.tot_alt = bj.get_total(dealerhand)
+        dealerhand.tot, dealerhand.alt_tot = bj.get_total(dealerhand)
         if (dealerhand.tot >= 17 and dealerhand.tot <= 21) or (dealerhand.alt_tot >= 17 and dealerhand.alt_tot <= 21):
             check_winner()
             reset_game()
             print(stand_flag)
             break
+    
+    if (bust_flag):    
+        time.sleep(1.25)
+        print("Player bust.")
 
-    print(bust_flag)
 
 
 pg.quit()
