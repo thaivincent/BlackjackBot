@@ -7,8 +7,8 @@ import numpy
 
 pg.init()
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 1440
+SCREEN_HEIGHT = 900
 
 # How many decks in a standard game of blackjack
 DECK_COUNT = 6
@@ -18,7 +18,7 @@ screen.convert()
 
 #Loading assets and images
 
-background = pg.image.load('bj_game_assets\\background.png')
+background = pg.image.load('bj_game_assets\\blackjack_background2.jpg')
 deck_sprite = pg.image.load('bj_game_assets\\full_deck_spritesheet.png').convert_alpha()
 hover_img = pg.image.load("bj_game_assets\\Medium Hover.png").convert_alpha()
 
@@ -126,8 +126,8 @@ screen.blit(background,(0,0))
 pg.display.flip()
 
 buttons = pg.sprite.Group()
-hit_button = animation(250,450,"bj_game_assets\\hit_button")
-stand_button  = animation(450,450,"bj_game_assets\\stand_button")
+hit_button = animation(540,625,"bj_game_assets\\hit_button")
+stand_button  = animation(740,625,"bj_game_assets\\stand_button")
 buttons.add(hit_button)
 buttons.add(stand_button)
 
