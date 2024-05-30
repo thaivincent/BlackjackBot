@@ -66,11 +66,3 @@ for rank in RANKS:
 
 
 #playerhand = Hand([Card("Heart","9"),Card("Spade","9")],0,0)
-
-"""
-print_hand(playerhand)
-get_total(playerhand)
-
-print_hand(playerhand)
-
-"""   
