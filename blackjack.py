@@ -16,7 +16,7 @@ DECK_COUNT = 6
 screen = pg.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT), pg.RESIZABLE)
 screen.convert()
 
-#Loading assets and images
+# Loading assets and images
 
 background = pg.image.load('bj_game_assets\\background.png')
 deck_sprite = pg.image.load('bj_game_assets\\full_deck_spritesheet.png').convert_alpha()
@@ -131,7 +131,7 @@ stand_button  = animation(450,450,"bj_game_assets\\stand_button")
 buttons.add(hit_button)
 buttons.add(stand_button)
 
-#initializing all statuses
+# Initializing all statuses
 run = True
 dealer_loaded = False
 player_loaded = False
