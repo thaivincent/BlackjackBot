@@ -22,6 +22,8 @@ background = pg.image.load('bj_game_assets\\background.png')
 deck_sprite = pg.image.load('bj_game_assets\\full_deck_spritesheet.png').convert_alpha()
 hover_img = pg.image.load("bj_game_assets\\Medium Hover.png").convert_alpha()
 
+GAME_FONT = pg.freetype.Font("bj_game_assets\\Minecraft.ttf", 48)
+
 
 class animation(pg.sprite.Sprite):
     def __init__(self, x, y,dir):
@@ -103,14 +105,11 @@ def load_card(card, x, y):
     screen.blit(deck_sprite,(x,y),(sprite_x,sprite_y,width,height))
     return
 
-def wait(event):
-    while True:
-        for i in event:
-            if i.check_clicked():
-                return
+
 
 def start_game():
     # Intialize a game deck and shuffle it
+    global game_deck
     game_deck = list(numpy.repeat(bj.new_deck,DECK_COUNT))
     random.shuffle(game_deck)
 
@@ -119,9 +118,27 @@ def start_game():
     dealerhand = bj.Hand([game_deck.pop(0), game_deck.pop(0)],0,0)
     return playerhand, dealerhand       
 
+def player_turn():
+    while True:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                pg.quit()
+            if hit_button.check_clicked():
+                bj.hit(playerhand.cards,game_deck)
+                bj.print_hand(playerhand)
+                return
+            if stand_button.check_clicked():
+                print("stand")
+                return
+    
+
+
+
 dealer_starting_x = 300
 
 playerhand,dealerhand = start_game()
+bj.get_total(playerhand)
+bj.get_total(dealerhand)
 screen.blit(background,(0,0))
 pg.display.flip()
 
@@ -151,6 +168,13 @@ while run:
         for i in dealerhand.cards:
             load_card(i,dealer_starting_x, 75)
             dealer_starting_x += 50
+        if dealerhand.alt_tot != dealerhand.tot:
+            string = str(dealerhand.tot) + "/" + str(dealerhand.alt_tot)
+            GAME_FONT.render_to(screen,(230,100),str(string),(255,255,255))
+            print(string)
+        else: 
+            GAME_FONT.render_to(screen,(230,100),str(dealerhand.tot),(255,255,255))
+        
         dealer_loaded = True
         dealer_starting_x = 300
 
@@ -161,20 +185,9 @@ while run:
         
         player_loaded = True
         dealer_starting_x = 300   
-  
-
-
-
-  
-
-    #wait(buttons)
-
-    if hit_button.check_clicked():
-        print("hit")
-    if stand_button.check_clicked():
-        print("stand")
+    
     pg.display.flip()
-
+    player_turn()
 
 
 

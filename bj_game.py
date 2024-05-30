@@ -42,10 +42,6 @@ def get_total(hand):
 
 def hit(hand,deck):
     hand.append(deck.pop(0))
-<<<<<<< HEAD
-=======
-    get_total(hand)
->>>>>>> b2ade5a3b305e0783e9fea8030179f8c0f2632f0
     return
 
 # For debuging hands
