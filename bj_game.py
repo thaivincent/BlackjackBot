@@ -1,5 +1,6 @@
 import random
 
+
 SUITS = ["diamond","club","heart","spade"]
 RANKS = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"]
 
@@ -18,6 +19,9 @@ class Hand:
         self.cards = cards
         self.tot = tot
         self.alt_tot = alt_tot
+
+    def append(hand, deck):
+        hand[len(hand)+1] = deck.pop(0)
 
  # get_value is a function which returns the value of a given card. This is the numeric value for 2-9 and 10 for J,Q,K, and 1 or 11 for A           
 def get_value(card):
@@ -43,7 +47,7 @@ def get_total(hand):
     return
 
 def hit(hand,deck):
-    hand.append(deck.pop(0))
+    hand.append(hand, deck)
     return
 
 # For debuging hands
@@ -56,14 +60,20 @@ def print_hand(hand):
 def print_card(card):
     print(card.rank,"of",card.suit)
     
+# For clearing player and dealer hands, resets their totals as well
+def clear_hand(hand):
+    for card in hand.cards:
+        card == None
+    hand.tot = 0
+    hand.alt_tot = 0
+    return
+
 # Orderd new deck initalized
 new_deck = []
 for rank in RANKS:
     for suit in SUITS:
         card = Card(suit,rank)
         new_deck.append(card)
-
-
 
 
 #playerhand = Hand([Card("Heart","9"),Card("Spade","9")],0,0)
