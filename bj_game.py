@@ -31,6 +31,8 @@ def get_value(card):
 
 # a function that updates the tot and alt tot values of a Hand class following the rules of blackjack
 def get_total(hand):
+    hand.tot = 0
+    hand.alt_tot = 0
     for card in hand.cards:
         if card.rank == "A":
             hand.tot += 1
