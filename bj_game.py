@@ -40,8 +40,9 @@ def get_total(hand):
             hand.alt_tot = hand.tot
     return
 
-def hit(hand):
-    hand.append(game_deck.pop(0))
+def hit(hand,deck):
+    hand.append(deck.pop(0))
+    get_total(hand)
     return
 
 # For debuging hands
