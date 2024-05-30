@@ -134,7 +134,7 @@ def player_turn():
 
 
 
-dealer_starting_x = 300
+dealer_starting_x = 609
 
 playerhand,dealerhand = start_game()
 bj.get_total(playerhand)
@@ -143,8 +143,8 @@ screen.blit(background,(0,0))
 pg.display.flip()
 
 buttons = pg.sprite.Group()
-hit_button = animation(540,625,"bj_game_assets\\hit_button")
-stand_button  = animation(740,625,"bj_game_assets\\stand_button")
+hit_button = animation(540,675,"bj_game_assets\\hit_button")
+stand_button  = animation(740,675,"bj_game_assets\\stand_button")
 buttons.add(hit_button)
 buttons.add(stand_button)
 
@@ -166,25 +166,25 @@ while run:
     #Load all of the cards to the screen
     while not dealer_loaded :
         for i in dealerhand.cards:
-            load_card(i,dealer_starting_x, 75)
+            load_card(i,dealer_starting_x, 175)
             dealer_starting_x += 50
         if dealerhand.alt_tot != dealerhand.tot:
             string = str(dealerhand.tot) + "/" + str(dealerhand.alt_tot)
-            GAME_FONT.render_to(screen,(230,100),str(string),(255,255,255))
+            GAME_FONT.render_to(screen,(480,205),str(string),(255,255,255))
             print(string)
         else: 
-            GAME_FONT.render_to(screen,(230,100),str(dealerhand.tot),(255,255,255))
+            GAME_FONT.render_to(screen,(510,205),str(dealerhand.tot),(255,255,255))
         
         dealer_loaded = True
-        dealer_starting_x = 300
+        dealer_starting_x = 609
 
     while not player_loaded:
         for i in playerhand.cards:
-            load_card(i,dealer_starting_x, 275)
+            load_card(i,dealer_starting_x, 445)
             dealer_starting_x += 50
         
         player_loaded = True
-        dealer_starting_x = 300   
+        dealer_starting_x = 609   
     
     pg.display.flip()
     player_turn()
